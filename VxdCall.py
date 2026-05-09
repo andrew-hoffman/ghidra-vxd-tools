@@ -1,8 +1,10 @@
+#Windows 9x VxD INT 20h annotator
 #@author Drew Hoffman, ChatGPT Codex
-#@category Windows9x.VxD
+#@category Windows
 #@keybinding
 #@menupath
 #@toolbar
+#@runtime PyGhidra
 
 #
 # Windows 9x VxD INT 20h annotator
