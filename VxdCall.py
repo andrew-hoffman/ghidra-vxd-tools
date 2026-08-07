@@ -34,6 +34,7 @@ from ghidra.program.model.data import (
 
 from ghidra.program.model.symbol import SourceType
 from ghidra.program.model.listing import CodeUnit
+from ghidra.program.model.address import AddressSet
 
 listing = currentProgram.getListing()
 mem = currentProgram.getMemory()
@@ -678,48 +679,98 @@ while instr_iter.hasNext() and not monitor.isCancelled():
 
     except:
         continue
-
+    
     #
-    # Remove only code/data units overlapping the 4-byte payload
-    #
-
-    for i in range(4):
-
-        addr = struct_addr.add(i)
-
-        cu = listing.getCodeUnitAt(addr)
-
-        if cu is not None:
-
-            cu_start = cu.getMinAddress()
-            cu_end = cu.getMaxAddress()
-
-            clearListing(cu_start, cu_end)
-
-    #
-    # Apply structure
+    # Check for inline payload bytes after the 4-byte struct
     #
 
+    #High bit set on service ID = callable from ring 3
+    base_svc_id = svc_id & 0x7FFF
+    extra_len = 0
+    extra_type = None  # 'WORD' or 'STRING'
+
+    if vxd_id == 0x0001:  # VMM
+        if base_svc_id == 0x00F5:  # _Debug_Flags_Service
+            extra_len = 2
+            extra_type = "WORD"
+        elif base_svc_id in (0x00F3, 0x00F4, 0x012D):  # Trace_Out, Debug_Out, Debug_Printf
+            str_addr = struct_addr.add(4)
+            str_len = 0
+            b = -1
+            # Scan for null terminator with a safety cap
+            while b != 0 and str_len < 256:
+                try:
+                    b = getByte(str_addr.add(str_len)) & 0xFF
+                    str_len += 1
+                except:
+                    break
+            extra_len = str_len
+            extra_type = "STRING"
+
+    total_payload_len = 4 + extra_len
+    next_addr = struct_addr.add(total_payload_len)
+
+    #
+    # 1. Clear payload AND a wider buffer zone ahead (64 bytes) to wipe out
+    #    desynchronized instructions created downstream by auto-analysis.
+    #
+    
+    clear_end = next_addr.add(64)
+    clearListing(struct_addr, clear_end)
+
+    #
+    # 2. Delete stale "Error" bookmarks across the cleared region
+    #
+    
+    bm = currentProgram.getBookmarkManager()
+    curr_addr = int_addr
+    while curr_addr.compareTo(clear_end) <= 0:
+        bookmarks = bm.getBookmarks(curr_addr)
+        if bookmarks is not None:
+            for b in list(bookmarks):
+                if b.getTypeString() == "Error":
+                    bm.removeBookmark(b)
+        curr_addr = curr_addr.add(1)
+
+    #
+    # 3. Apply 4-byte VxDCall structure
+    #
+    
     try:
         createData(struct_addr, vxdcall_struct)
     except Exception as e:
-        print(
-            "Failed to apply structure at %s: %s"
-            % (struct_addr, str(e))
-        )
+        print("Failed to apply structure at %s: %s" % (struct_addr, str(e)))
         continue
-    
-    #
-    # Ensure disassembly resumes after payload
-    #
-    
-    next_addr = struct_addr.add(4)
 
+    #
+    # 4. Apply data type to inline payload if present
+    #
+    
+    extra_addr = struct_addr.add(4)
+    if extra_type == "WORD":
+        try:
+            createWord(extra_addr)
+        except Exception as e:
+            print("Failed to create WORD at %s: %s" % (extra_addr, str(e)))
+    elif extra_type == "STRING" and extra_len > 0:
+        try:
+            createAsciiString(extra_addr, extra_len)
+        except Exception as e:
+            print("Failed to create String at %s: %s" % (extra_addr, str(e)))
+
+    #
+    # 5. Disassemble cleanly from next_addr
+    #
+    
     disassemble(next_addr)
     
     #
     # Resolve names
     #
+
+
+    is_win32_export = bool(svc_id & 0x8000)
+    
 
     vxd_name = VXD_NAMES.get(
         vxd_id,
@@ -727,13 +778,15 @@ while instr_iter.hasNext() and not monitor.isCancelled():
     )
 
     svc_name = SERVICES.get(
-        (vxd_id, svc_id),
-        "Service_%04X" % svc_id
+        (vxd_id, base_svc_id),
+        "Service_%04X" % base_svc_id
     )
 
-    full_name = "%s.%s" % (
+    suffix = "_U" if is_win32_export else ""
+    full_name = "%s.%s%s" % (
         vxd_name,
-        svc_name
+        svc_name,
+        suffix
     )
 
     #
@@ -761,9 +814,10 @@ while instr_iter.hasNext() and not monitor.isCancelled():
     #
 
     label_name = sanitize_name(
-        "VxDCall_%s_%s" % (
+        "VxDCall_%s_%s%s" % (
             vxd_name,
-            svc_name
+            svc_name,
+            suffix
         )
     )
 
