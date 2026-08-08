@@ -44,7 +44,10 @@ symbol_table = currentProgram.getSymbolTable()
 #
 # ============================================================================
 # Services database
-# Generated from vmm.h in VMDisp9x by Jaroslav Hensl (JHRobotics) 
+# Generated / compiled from:
+# vmm.h in Windows 98 DDK
+# vmm.h in VMDisp9x by Jaroslav Hensl (JHRobotics)
+# and Ralf Brown's Interrupt List at http://www.ctyme.com/intr/int-20.htm
 # ============================================================================
 #
 
@@ -356,6 +359,7 @@ SERVICES = {
     (0x0001, 0x00F3): "Trace_Out_Service",
     (0x0001, 0x00F4): "Debug_Out_Service",
     (0x0001, 0x00F5): "Debug_Flags_Service",
+    
     (0x0001, 0x00F6): "VMMAddImportModuleName",
     (0x0001, 0x00F7): "VMM_Add_DDB",
     (0x0001, 0x00F8): "VMM_Remove_DDB",
@@ -464,6 +468,221 @@ SERVICES = {
     (0x0001, 0x015D): "GetPhysPageInfo",
     (0x0001, 0x015E): "RegQueryInfoKey",
     (0x0001, 0x015F): "MemArb_Reserve_Pages",
+
+    (0x0001, 0x0160): "Time_Slice_Sys_VM_Idle",
+    (0x0001, 0x0161): "Time_Slice_Sleep",
+    (0x0001, 0x0162): "Boost_With_Decay",
+    (0x0001, 0x0163): "Set_Inversion_Pri",
+    (0x0001, 0x0164): "Reset_Inversion_Pri",
+    (0x0001, 0x0165): "Release_Inversion_Pri",
+    (0x0001, 0x0166): "Get_Thread_Win32_Pri",
+    (0x0001, 0x0167): "Set_Thread_Win32_Pri",
+    (0x0001, 0x0168): "Set_Thread_Static_Boost",
+    (0x0001, 0x0169): "Set_VM_Static_Boost",
+    (0x0001, 0x016A): "Release_Inversion_Pri_ID",
+    (0x0001, 0x016B): "Attach_Thread_To_Group",
+    (0x0001, 0x016C): "Detach_Thread_From_Group",
+    (0x0001, 0x016D): "Set_Group_Static_Boost",
+    (0x0001, 0x016E): "_GetRegistryPath",
+    (0x0001, 0x016F): "_GetRegistryKey",
+
+    (0x0001, 0x0170): "_CleanupNestedExec",
+    (0x0001, 0x0171): "_RegRemapPreDefKey",
+    (0x0001, 0x0172): "End_V86_Serialization",
+    (0x0001, 0x0173): "_Assert_Range",
+    (0x0001, 0x0174): "_Sprintf",
+    (0x0001, 0x0175): "_PageChangePager",
+    (0x0001, 0x0176): "_RegCreateDynKey",
+    (0x0001, 0x0177): "RegQMulti",
+    (0x0001, 0x0178): "Boost_Thread_With_VM",
+    (0x0001, 0x0179): "Get_Boot_Flags",
+    (0x0001, 0x017A): "Set_Boot_Flags",
+    (0x0001, 0x017B): "_lstrcpyn",
+    (0x0001, 0x017C): "_lstrlen",
+    (0x0001, 0x017D): "_lmemcpy",
+    (0x0001, 0x017E): "_GetVxDName",
+    (0x0001, 0x017F): "Force_Mutexes_Free",
+    
+    (0x0001, 0x0180): "Restore_Forced_Mutexes",
+    (0x0001, 0x0181): "_AddReclaimableItem",
+    (0x0001, 0x0182): "_SetReclaimableItem",
+    (0x0001, 0x0183): "_EnumReclaimableItem",
+    (0x0001, 0x0184): "Time_Slice_Wake_Sys_VM",
+    (0x0001, 0x0185): "VMM_Replace_Global_Environment",
+    (0x0001, 0x0186): "Begin_Non_Serial_Nest_V86_Exec",
+    (0x0001, 0x0187): "Get_Nest_Exec_Status",
+    (0x0001, 0x0188): "Open_Boot_Log",
+    (0x0001, 0x0189): "Write_Boot_Log",
+    (0x0001, 0x018A): "Close_Boot_Log",
+    (0x0001, 0x018B): "EnableDisable_Boot_Log",
+    (0x0001, 0x018C): "_Call_On_My_Stack",
+    (0x0001, 0x018D): "Get_Inst_V86_Int_Vec_Base",
+    (0x0001, 0x018E): "_lstrcmpi",
+    (0x0001, 0x018F): "_strupr",
+    
+    (0x0001, 0x0190): "Log_Fault_Call_Out",
+    (0x0001, 0x0191): "_AtEventTime",
+    
+    # Added in Windows 95 OSR1 (Win4.03)   
+    (0x0001, 0x0192): "_Call_On_My_Not_Flat_Stack",
+    (0x0001, 0x0193): "_LinRegionLock",
+    (0x0001, 0x0194): "_LinRegionUnLock",
+    (0x0001, 0x0195): "_AttemptingSomethingDangerous", #0w0
+    (0x0001, 0x0196): "_Vsprintf",
+    (0x0001, 0x0197): "_Vsprintfw",
+    (0x0001, 0x0198): "Load_FS_Service",
+    (0x0001, 0x0199): "Assert_FS_Service",
+    (0x0001, 0x019a): "ObsoleteRtlUnwind", #Stdcall, 4
+    (0x0001, 0x019b): "ObsoleteRtlRaiseException", #Stdcall, 1
+    (0x0001, 0x019c): "ObsoleteRtlRaiseStatus", #Stdcall, 1
+    (0x0001, 0x019d): "ObsoleteKeGetCurrentIrql", #Stdcall, 1
+    (0x0001, 0x019e): "ObsoleteKfRaiseIrql", #Fastcall,1
+    (0x0001, 0x019f): "ObsoleteKfLowerIrql", #Fastcall,1
+    
+    (0x0001, 0x01a0): "_Begin_Preemptable_Code",
+    (0x0001, 0x01a1): "_End_Preemptable_Code)",
+    (0x0001, 0x01a2): "Set_Preemptable_Count", #Fastcall,1
+    (0x0001, 0x01a3): "ObsoleteKeInitializeDpc", #Stdcall, 3
+    (0x0001, 0x01a4): "ObsoleteKeInsertQueueDpc", #Stdcall, 3
+    (0x0001, 0x01a5): "ObsoleteKeRemoveQueueDpc", #Stdcall, 1
+    (0x0001, 0x01a6): "HeapAllocateEx", #Stdcall, 4
+    (0x0001, 0x01a7): "HeapReAllocateEx", #Stdcall, 5
+    (0x0001, 0x01a8): "HeapGetSizeEx", #Stdcall, 2
+    (0x0001, 0x01a9): "HeapFreeEx", #Stdcall, 2
+    (0x0001, 0x01aa): "_Get_CPUID_Flags",
+    (0x0001, 0x01ab): "KeCheckDivideByZeroTrap", #Stdcall, 1
+
+    # Added in Windows 98 (Win4.1)
+    (0x0001, 0x01ac): "_RegisterGARTHandler",
+    (0x0001, 0x01ad): "_GARTReserve",
+    (0x0001, 0x01ae): "_GARTCommit",
+    (0x0001, 0x01af): "_GARTUnCommit",
+    
+    (0x0001, 0x01b0): "_GARTFree",
+    (0x0001, 0x01b1): "_GARTMemAttributes",
+    (0x0001, 0x01b2): "KfRaiseIrqlToDpcLevel", #Stdcall, 0
+    (0x0001, 0x01b3): "VMMCreateThreadEx",
+    (0x0001, 0x01b4): "_FlushCaches",
+    (0x0001, 0x01b5): "Set_Thread_Win32_Pri_NoYield",
+    (0x0001, 0x01b6): "_FlushMappedCacheBlock",
+    (0x0001, 0x01b7): "_ReleaseMappedCacheBlock",
+    (0x0001, 0x01b8): "Run_Preemptable_Events",
+    (0x0001, 0x01b9): "_MMPreSystemExit",
+    (0x0001, 0x01ba): "_MMPageFileShutDown",
+    (0x0001, 0x01bb): "_Set_Global_Time_Out_Ex",
+    (0x0001, 0x01bc): "Query_Thread_Priority",
+    #whew.
+
+    #
+    # DEBUG (0002h)
+    #
+
+    (0x0002, 0x0000): "Get_Version",
+    (0x0002, 0x0001): "DEBUG_Fault",
+    (0x0002, 0x0002): "DEBUG_CheckFault",
+    (0x0002, 0x0003): "_DEBUG_LoadSyms",
+
+    #
+    # VPICD (0003h)
+    #
+
+    (0x0003, 0x0000): "Get_Version",
+    (0x0003, 0x0001): "Virtualize IRQ",
+    (0x0003, 0x0002): "Set Interrupt Request",
+    (0x0003, 0x0003): "Clear Interrupt Request",
+    (0x0003, 0x0004): "Phys_EOI",
+    (0x0003, 0x0005): "Get_Complete_Status",
+    (0x0003, 0x0006): "Get_Status",
+    (0x0003, 0x0007): "Test_Phys_Request",
+    (0x0003, 0x0008): "Physically_Mask",
+    (0x0003, 0x0009): "Physically_Unmask",
+    (0x0003, 0x000A): "Set_Auto_Masking",
+    (0x0003, 0x000B): "Get_IRQ_Complete_Status",
+    (0x0003, 0x000C): "Convert_Handle_To_IRQ",
+    (0x0003, 0x000D): "Convert_IRQ_To_Int",
+    (0x0003, 0x000E): "Convert_Int_To_IRQ",
+    (0x0003, 0x000F): "Call_When_Hw_Int",
+    
+    (0x0003, 0x0010): "Force_Default_Owner",
+    (0x0003, 0x0011): "Force_Default_Behavior",
+    (0x0003, 0x0012): "Auto_Mask_At_Inst_Swap",
+    (0x0003, 0x0013): "Begin_Inst_Page_Swap",
+    (0x0003, 0x0014): "End_Inst_Page_Swap",
+    (0x0003, 0x0015): "Virtual_EOI",
+    (0x0003, 0x0016): "Get_Virtualization_Count",
+    (0x0003, 0x0017): "Post_Sys_Critical_Init",
+    (0x0003, 0x0018): "VM_SlavePIC_Mask_Change",
+    (0x0003, 0x0019): "Clear_IR_Bits",
+    (0x0003, 0x001A): "Get_Level_Mask",
+    (0x0003, 0x001B): "Set_Level_Mask",
+    (0x0003, 0x001C): "Set_Irql_Mask",
+    (0x0003, 0x001D): "Set_Channel_Irql",
+    (0x0003, 0x001E): "Prepare_For_Shutdown",
+    (0x0003, 0x001F): "Register_Trigger_Handler",
+
+
+
+    #
+    # VDMAD (0004h)
+    #
+    
+    (0x0004, 0x0000): "Get_Version",
+    (0x0004, 0x0001): "virtualize channel",
+    (0x0004, 0x0002): "get region information",
+    (0x0004, 0x0003): "set region information",
+    (0x0004, 0x0004): "get virtual state",
+    (0x0004, 0x0005): "set virtual state",
+    (0x0004, 0x0006): "set physical state",
+    (0x0004, 0x0007): "mask channel",
+    (0x0004, 0x0008): "unmask channel",
+    (0x0004, 0x0009): "lock DMA region",
+    (0x0004, 0x000a): "unlock DMA region",
+    (0x0004, 0x000b): "scatter lock",
+    (0x0004, 0x000c): "scatter unlock",
+    (0x0004, 0x000d): "reserve buffer space",
+    (0x0004, 0x000e): "request buffer",
+    (0x0004, 0x000f): "release buffer",
+    
+    (0x0004, 0x0010): "copy to buffer",
+    (0x0004, 0x0011): "copy from buffer",
+    (0x0004, 0x0012): "default handler",
+    (0x0004, 0x0013): "disable translation",
+    (0x0004, 0x0014): "enable translation",
+    (0x0004, 0x0015): "get EISA address mode",
+    (0x0004, 0x0016): "set EISA address mode",
+    (0x0004, 0x0017): "unlock DMA region (ND)",
+    (0x0004, 0x0018): "Phys_Mask_Channel",
+    (0x0004, 0x0019): "Phys_Unmask_Channel",
+    (0x0004, 0x001A): "Unvirtualize_Channel",
+    (0x0004, 0x001B): "Set_IO_Address",
+    (0x0004, 0x001C): "Get_Phys_Count",
+    (0x0004, 0x001D): "Get_Phys_Status",
+    (0x0004, 0x001E): "Get_Max_Phys_Page",
+    (0x0004, 0x001F): "Set_Channel_Callbacks",
+    
+    (0x0004, 0x0020): "Get_Virt_Count",
+    (0x0004, 0x0021): "Set_Virt_Count",
+
+    #
+    # VTD (0005h)
+    #
+
+    (0x0005, 0x0000): "Get_Version",
+    (0x0005, 0x0001): "update system clock",
+    (0x0005, 0x0002): "get interrupt period",
+    (0x0005, 0x0003): "begin minimum interrupt period",
+    (0x0005, 0x0004): "end minimum interrupt period",
+    (0x0005, 0x0005): "disable trapping",
+    (0x0005, 0x0006): "enable trapping",
+    (0x0005, 0x0007): "get real time",
+    (0x0005, 0x0008): "Get_Date_And_Time",
+    (0x0005, 0x0009): "Adjust_VM_Count",
+    (0x0005, 0x000A): "Delay",
+
+
+    # ...
+
+
 }
 
 VXD_NAMES = {
@@ -798,8 +1017,10 @@ while instr_iter.hasNext() and not monitor.isCancelled():
         (vxd_id, base_svc_id),
         "Service_%04X" % base_svc_id
     )
-
-    suffix = "_U" if is_win32_export else ""
+    
+    #high bit of service name set = JMP rather than call (?)
+    
+    suffix = "_JMP" if is_win32_export else ""
     full_name = "%s.%s%s" % (
         vxd_name,
         svc_name,
