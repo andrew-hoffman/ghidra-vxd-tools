@@ -668,7 +668,7 @@ SERVICES = {
     #
 
     (0x0005, 0x0000): "Get_Version",
-    (0x0005, 0x0001): "update system clock",
+    (0x0005, 0x0001): "update_system_clock",
     (0x0005, 0x0002): "get interrupt period",
     (0x0005, 0x0003): "begin minimum interrupt period",
     (0x0005, 0x0004): "end minimum interrupt period",
@@ -899,50 +899,11 @@ while instr_iter.hasNext() and not monitor.isCancelled():
     except:
         continue
     
-    #
-    # Check for inline payload bytes after the 4-byte struct
-    #
 
     #High bit set on service ID = callable from ring 3
     base_svc_id = svc_id & 0x7FFF
     extra_len = 0
     extra_type = None  # 'WORD' or 'STRING'
-
-    if vxd_id == 0x0001:  # VMM
-        if base_svc_id == 0x00F5:  # _Debug_Flags_Service
-            extra_len = 2
-            extra_type = "WORD"
-        elif base_svc_id in (0x00F3, 0x00F4, 0x012D):  # Trace_Out, Debug_Out, Debug_Printf
-                str_addr = struct_addr.add(4)
-                str_len = 0
-                b = -1
-                
-                # 1. Scan for string null terminator
-                while b != 0 and str_len < 256:
-                    try:
-                        b = getByte(str_addr.add(str_len)) & 0xFF
-                        str_len += 1
-                    except:
-                        break
-                
-                # 2. Absorb trailing align 4 padding bytes (00)
-                curr_offset = str_addr.add(str_len).getOffset()
-                rem = curr_offset % 4
-                if rem != 0:
-                    pad_needed = 4 - rem
-                    pad_bytes = 0
-                    while pad_bytes < pad_needed:
-                        try:
-                            if getByte(str_addr.add(str_len + pad_bytes)) == 0:
-                                pad_bytes += 1
-                            else:
-                                break
-                        except:
-                            break
-                    str_len += pad_bytes
-
-                extra_len = str_len
-                extra_type = "STRING"
 
     total_payload_len = 4 + extra_len
     next_addr = struct_addr.add(total_payload_len)
